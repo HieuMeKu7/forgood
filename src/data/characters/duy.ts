@@ -95,7 +95,7 @@ export const duyCards: CardDef[] = [
   // CUSTOM duy-11: all ally-character cards currently in hand get persistent -1 cost (costOverride) until played.
   {
     id: 'duy-11', characterId: 'duy', name: 'Giá Nội Bộ',
-    cost: 3, baseCost: 3, types: ['support'], keywords: ['support', 'friend'],
+    cost: 3, baseCost: 3, types: ['support'], keywords: ['support'],
     description: 'Tất cả lá đồng minh trên tay giảm 1 đến khi dùng.',
     targetType: 'none',
     effects: [{ op: 'custom', id: 'duy-11' }],
