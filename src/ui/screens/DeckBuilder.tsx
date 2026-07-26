@@ -146,7 +146,7 @@ export function DeckBuilder(): JSX.Element {
 
   const playNow = (): void => {
     if (!validation.valid) return;
-    app.startBattle(buildDeck());
+    app.selectDeckForBattle(buildDeck());
   };
 
   return (

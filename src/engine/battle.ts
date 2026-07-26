@@ -1728,6 +1728,10 @@ export function startTurn(state: GameState, teamId: TeamId): void {
     lam.overloadDamage = 0;
     lam.overloadExtra = 0;
   }
+  // permanent enemy-modifier mana bonus (Enemy System)
+  for (const m of t.modifiers) {
+    if (m.kind === 'flag' && m.id === 'perma-mana') mana += m.amount ?? 0;
+  }
   t.mana = Math.min(RULES.MANA_CAP, mana);
   t.manaRefundedThisTurn = 0;
 
@@ -1765,6 +1769,10 @@ export function startTurn(state: GameState, teamId: TeamId): void {
       draw += m.amount ?? 0;
       t.modifiers = t.modifiers.filter((x) => x !== m);
     }
+  }
+  // permanent enemy-modifier draw bonus (Enemy System)
+  for (const m of t.modifiers) {
+    if (m.kind === 'flag' && m.id === 'perma-draw') draw += m.amount ?? 0;
   }
   // lam-08 / lam-21 stored draws
   for (const m of [...t.modifiers]) {

@@ -16,8 +16,10 @@ export function MainMenu(): JSX.Element {
 
   const savedValidDecks = app.decks.filter((d) => validateDeck(d).valid);
 
+  // picking a deck leads to the enemy-select screen (data-driven Enemy System)
   const start = (deck: Deck) => {
-    app.startBattle(deck, { aiLevel });
+    app.updateSettings({ aiLevel });
+    app.selectDeckForBattle(deck);
   };
 
   const startRandom = () => {
@@ -31,7 +33,8 @@ export function MainMenu(): JSX.Element {
       createdAt: now,
       updatedAt: now,
     };
-    app.startBattle(deck, { aiLevel });
+    app.updateSettings({ aiLevel });
+    app.selectDeckForBattle(deck);
   };
 
   return (

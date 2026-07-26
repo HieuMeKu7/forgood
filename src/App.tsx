@@ -9,6 +9,7 @@ import { SettingsScreen } from './ui/screens/SettingsScreen';
 import { HowToPlay } from './ui/screens/HowToPlay';
 import { BattleScreen } from './ui/screens/Battle';
 import { ResultScreen } from './ui/screens/Result';
+import { EnemySelect } from './ui/screens/EnemySelect';
 import { isWarningAccepted, acceptWarning } from './store/storage';
 
 function ContentWarning({ onAccept }: { onAccept: () => void }): JSX.Element {
@@ -46,6 +47,7 @@ function Router(): JSX.Element {
       {app.screen === 'history' && <HistoryScreen />}
       {app.screen === 'settings' && <SettingsScreen />}
       {app.screen === 'howto' && <HowToPlay />}
+      {app.screen === 'enemySelect' && <EnemySelect />}
       {app.screen === 'battle' && <BattleScreen />}
       {app.screen === 'result' && <ResultScreen />}
     </div>

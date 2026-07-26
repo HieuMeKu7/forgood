@@ -4,6 +4,8 @@ import {
   createBattle, playCard, useUltimate, endTurn, resolvePendingChoice, canPlayCard,
   getCardCost, aiChooseAction, applyIntent, aiPickChoice, allyOf,
 } from '../../engine';
+import { previewEnemyIntent } from '../../engine/ai';
+import { applyEnemyModifiers } from '../../engine/enemyDeckBuilder';
 import type { CardInstance, CharacterId, CombatantState, GameState, MatchResult, TeamState } from '../../engine/types';
 import { RULES } from '../../engine/types';
 import { getCardDef } from '../../data/cards';
@@ -142,7 +144,9 @@ export function BattleScreen(): JSX.Element {
   // (re)create battle when config changes
   useEffect(() => {
     if (!cfg) return;
-    stateRef.current = createBattle({ playerDeck: cfg.deck, enemyDeck: cfg.enemyDeck, seed: cfg.seed, aiLevel: cfg.aiLevel });
+    const st = createBattle({ playerDeck: cfg.deck, enemyDeck: cfg.enemyDeck, seed: cfg.seed, aiLevel: cfg.aiLevel });
+    if (cfg.modifiers && cfg.modifiers.length > 0) applyEnemyModifiers(st, cfg.modifiers);
+    stateRef.current = st;
     finishedRef.current = false;
     setTargetingCard(null);
     setFloats([]);
@@ -301,6 +305,10 @@ export function BattleScreen(): JSX.Element {
   };
 
   const recentLog = state.log.slice(-60);
+  const enemyIntent = isPlayerTurn ? previewEnemyIntent(state) : null;
+  const intentIcon = enemyIntent
+    ? { attack: '⚔', defense: '🛡', heal: '✚', support: '🎴', ultimate: '⚡' }[enemyIntent.kind]
+    : '';
 
   return (
     <div className={`screen${shake ? ' shake' : ''}`} style={{ maxWidth: 1400 }}>
@@ -308,6 +316,21 @@ export function BattleScreen(): JSX.Element {
       {flash && settings.screenFlash && <div className="flash-overlay" />}
       <div className="battle">
         <div className="battle-main">
+          <div className="enemy-banner">
+            <strong>{cfg.enemyName ?? 'Đội địch'}</strong>
+            <span className="dim" title="Tay bài địch bị ẩn — chỉ thấy số lượng.">
+              {enemy.hand.slice(0, 10).map((c) => <span key={c.instanceId} className="card-back" />)}
+              {' '}{enemy.hand.length} lá trên tay
+            </span>
+            {enemyIntent && (
+              <span
+                className={`intent-chip intent-${enemyIntent.kind}`}
+                title="Ý đồ lượt tới của địch (dự đoán từ chính deck của chúng — theo seed, không đổi khi bạn chưa làm gì)."
+              >
+                {intentIcon} {enemyIntent.label}{enemyIntent.value !== undefined ? ` ~${enemyIntent.value}` : ''}
+              </span>
+            )}
+          </div>
           <TeamRow state={state} t={enemy} isEnemy targeting={targetingCard !== null} onTarget={handleTarget} floats={floats} />
           <TeamRow state={state} t={player} isEnemy={false} targeting={false} onUlt={handleUlt} floats={floats} />
 

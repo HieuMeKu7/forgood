@@ -407,6 +407,46 @@ function hardIntent(state: GameState, me: TeamState, playable: CardInstance[], u
 }
 
 // ------------------------------------------------------------
+// Enemy intent telegraph (Enemy System)
+// ------------------------------------------------------------
+
+import type { EnemyIntentView } from '../types/enemy';
+
+/** Telegraph what the enemy is likely to do on its next turn.
+ * Pure function of the state (no RNG, no mutation): looks at the enemy's
+ * retained hand plus the top of ITS OWN draw pile (a designed telegraph —
+ * the AI itself never peeks the PLAYER's pile) and greedily estimates what
+ * fits in a 7-mana turn. Deterministic per seed. */
+export function previewEnemyIntent(state: GameState): EnemyIntentView {
+  const enemy = state.teams.enemy;
+  if (enemy.characters.some((c) => c.ultimateReady && !c.ultimateUsed)) {
+    return { kind: 'ultimate', label: 'Ultimate sẵn sàng!' };
+  }
+  // upcoming hand = retained cards + the next 5 draws (drawCards pops from the end)
+  const upcoming: CardInstance[] = [...enemy.hand, ...enemy.drawPile.slice(-RULES.HAND_DRAW).reverse()];
+  const mien = findChar(enemy, 'mien');
+  const sorted = [...upcoming].sort((a, b) => getCardDef(a.defId).cost - getCardDef(b.defId).cost);
+  let mana = RULES.MANA_PER_TURN;
+  let dmg = 0, blk = 0, heal = 0, support = 0;
+  for (const c of sorted) {
+    const def = getCardDef(c.defId);
+    const cost = c.isCopy ? 0 : def.cost;
+    if (cost > mana) continue;
+    mana -= cost;
+    const est = estimateCard(c, mien?.face);
+    dmg += est.damage;
+    blk += est.block;
+    heal += est.heal;
+    support += est.draw + est.debuff;
+  }
+  const best = Math.max(dmg, blk, heal);
+  if (best === 0 && support > 0) return { kind: 'support', label: 'Bày mưu' };
+  if (dmg >= blk && dmg >= heal) return { kind: 'attack', label: 'Tấn công', value: Math.round(dmg) };
+  if (blk >= heal) return { kind: 'defense', label: 'Phòng thủ', value: Math.round(blk) };
+  return { kind: 'heal', label: 'Hồi máu', value: Math.round(heal) };
+}
+
+// ------------------------------------------------------------
 // Headless enemy turn (tests / instant mode)
 // ------------------------------------------------------------
 

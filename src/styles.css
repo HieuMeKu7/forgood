@@ -287,6 +287,35 @@ input, select {
 .char-select-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; border-radius: 8px; border: 2px solid var(--border); cursor: pointer; background: var(--bg2); font-size: 12px; }
 .char-select-item.chosen { border-color: var(--friend); box-shadow: 0 0 10px rgba(232, 161, 60, 0.4); }
 
+/* ---------- enemy system ---------- */
+.enemy-banner {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 6px 12px;
+  background: linear-gradient(90deg, #1c1016, var(--panel));
+  border: 1px solid #3d2a2a; border-radius: 10px;
+  font-size: 14px;
+}
+.card-back {
+  display: inline-block;
+  width: 12px; height: 17px;
+  margin-right: 2px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #2a1a30, #14141f);
+  border: 1px solid var(--chaos);
+  vertical-align: middle;
+}
+.intent-chip {
+  padding: 3px 10px; border-radius: 10px;
+  border: 1px solid var(--border);
+  font-weight: 700; font-size: 13px;
+  cursor: help;
+}
+.intent-attack { border-color: var(--betray); color: var(--betray-glow); box-shadow: 0 0 8px rgba(195, 36, 60, 0.35); }
+.intent-defense { border-color: var(--block); color: var(--block); }
+.intent-heal { border-color: #4a9; color: #90e0a0; }
+.intent-support { border-color: var(--chaos); color: #c99aff; }
+.intent-ultimate { border-color: var(--chaos); color: #c99aff; animation: pulse 1.2s infinite; }
+
 /* ---------- generic ---------- */
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .spread { justify-content: space-between; }

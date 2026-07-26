@@ -32,7 +32,9 @@ npm run preview    # xem thử bản build
 
 ## Cách chơi nhanh
 
-1. **New Game** → chọn một deck mẫu (8 deck dựng sẵn) hoặc deck tự xây → chọn độ khó AI.
+1. **New Game** → chọn deck (8 deck mẫu hoặc deck tự xây) → màn **Chọn Đối Thủ**: 10 kẻ địch
+   data-driven, mỗi kẻ có deck 30 lá riêng, 4 profile độ khó (Dễ / Thường / Khó / **Boss**)
+   với modifier riêng (thêm HP, Giáp mở màn, +1 Mana/lượt, Chảy máu chào sân…).
 2. Mỗi lượt: Mana đặt lại thành 7 (tối đa 10), rút 5 lá, dùng tối đa 14 lá, bấm **End Turn**.
 3. Hai đội dùng chung 50 HP; nhân vật vẫn là mục tiêu riêng cho Taunt/nội tại/Ultimate.
 4. Mana thực trả cho lá của nhân vật nào sẽ nạp thanh **Ultimate** của nhân vật đó.
@@ -51,11 +53,16 @@ src/
     resolvers.ts    # custom resolver cho các lá/Ultimate quá đặc biệt
     ai.ts           # AI 3 mức (hard = lookahead trên structuredClone)
     deck.ts         # validate deck, sinh deck ngẫu nhiên, mana curve
+    enemyDeckBuilder.ts # resolve enemy + profile → deck/AI level/modifiers, validate hệ thống địch
     rng.ts          # mulberry32 seeded RNG (state nằm trong GameState)
   data/
     characters/     # 10 file data — 21 lá/nhân vật, thuần data (EffectDef)
     characterMeta.ts# nội tại + Ultimate của 10 nhân vật
     sampleDecks.ts  # 8 deck mẫu (mỗi deck đúng 30 lá, hợp lệ)
+    enemies.ts      # 10 EnemyDefinition + modifiers + profiles (Easy/Normal/Hard/Boss)
+    enemyDecks.ts   # 10 deck địch riêng (30 lá/deck, hợp lệ)
+  types/
+    enemy.ts        # model Enemy System (EnemyDefinition, EnemyProfile, EnemyModifier, EnemyIntentView)
   ui/               # React UI (screens, CardView, avatar SVG tự vẽ)
   store/            # localStorage + app context
   audio/            # Web Audio synth (không dùng file âm thanh ngoài)
@@ -72,3 +79,7 @@ tests/              # vitest — 25 test luật bắt buộc + smoke/self-play t
 - **Phiếu (Duy)** tự động bù phần Mana còn thiếu khi chơi bài; Ultimate của Duy chỉ nạp
   theo Mana **thực trả**.
 - Avatar là SVG hình khối tự vẽ — không dùng tài sản có bản quyền, không hình ảnh người thật.
+- **Enemy System**: tay bài địch bị ẩn (chỉ thấy số lượng); **ý đồ (intent)** của địch được
+  telegraph trong lượt của bạn — dự đoán thuần túy từ deck của chính địch theo seed
+  (AI không bao giờ nhìn trộm draw pile của người chơi). Boss chạy AI Hard cộng toàn bộ
+  boss modifier riêng của từng kẻ địch.
