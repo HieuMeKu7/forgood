@@ -1,0 +1,208 @@
+import type { CardDef } from '../../engine/types';
+
+// KHÔI — THE SHIELD. Tank, Giáp, phản đòn.
+// Card ids follow spec order: khoi-01 .. khoi-21.
+
+export const khoiCards: CardDef[] = [
+  {
+    id: 'khoi-01', characterId: 'khoi', name: 'Thủ Thế',
+    cost: 0, baseCost: 0, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 3 Giáp.',
+    targetType: 'none',
+    effects: [{ op: 'block', value: 3 }],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-02', characterId: 'khoi', name: 'Gõ Khiên',
+    cost: 0, baseCost: 0, types: ['attack', 'defense'], keywords: ['attack', 'defense'],
+    description: 'Gây 1 sát thương, nhận 2 Giáp.',
+    targetType: 'enemy',
+    effects: [{ op: 'damage', value: 1 }, { op: 'block', value: 2 }],
+    aiTags: ['damage', 'defense'], animTags: ['hit', 'shield'],
+  },
+  {
+    id: 'khoi-03', characterId: 'khoi', name: 'Giữ Vững Hàng Ngũ',
+    cost: 0, baseCost: 0, types: ['support'], keywords: ['support', 'defense', 'exhaust'],
+    description: 'Lá tạo Giáp tiếp theo thêm 3. Tiêu hao.',
+    targetType: 'none', exhaust: true,
+    effects: [{ op: 'modifier', target: 'ownTeam', mod: { kind: 'blockBonus', amount: 3, uses: 1 } }],
+    aiTags: ['setup'], animTags: ['glow'],
+  },
+  {
+    id: 'khoi-04', characterId: 'khoi', name: 'Khiên Kích',
+    cost: 1, baseCost: 1, types: ['attack'], keywords: ['attack'],
+    description: 'Gây 3 sát thương; nếu đang có Giáp, thêm 2.',
+    targetType: 'enemy',
+    effects: [{ op: 'if', cond: { kind: 'selfHasBlock' }, then: [{ op: 'damage', value: 5 }], else: [{ op: 'damage', value: 3 }] }],
+    aiTags: ['damage', 'combo'], animTags: ['hit'],
+  },
+  {
+    id: 'khoi-05', characterId: 'khoi', name: 'Hít Sâu',
+    cost: 1, baseCost: 1, types: ['heal', 'defense'], keywords: ['heal', 'defense'],
+    description: 'Hồi 2 HP, nhận 4 Giáp.',
+    targetType: 'none',
+    effects: [{ op: 'heal', value: 2 }, { op: 'block', value: 4 }],
+    aiTags: ['heal', 'defense'], animTags: ['glow', 'shield'],
+  },
+  {
+    id: 'khoi-06', characterId: 'khoi', name: 'Lời Thề Nhỏ',
+    cost: 1, baseCost: 1, types: ['support', 'defense'], keywords: ['friend', 'support', 'defense'],
+    description: 'Tăng 1 Quan hệ, nhận 3 Giáp.',
+    targetType: 'none',
+    effects: [{ op: 'rel', delta: 1 }, { op: 'block', value: 3 }],
+    aiTags: ['relationship', 'defense'], animTags: ['glow', 'shield'],
+  },
+  {
+    id: 'khoi-07', characterId: 'khoi', name: 'Đỡ Đòn',
+    cost: 2, baseCost: 2, types: ['defense', 'support'], keywords: ['defense', 'support'],
+    description: 'Nhận 8 Giáp; lá đồng minh tiếp theo không thể bị bỏ.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 8 },
+      { op: 'modifier', target: 'ownTeam', mod: { kind: 'retainProtect', uses: 1, filter: { charId: 'ally' } } },
+    ],
+    aiTags: ['defense', 'setup'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-08', characterId: 'khoi', name: 'Trả Đũa',
+    cost: 2, baseCost: 2, types: ['defense'], keywords: ['defense', 'counter'],
+    description: 'Nhận 5 Giáp và Phản đòn 4.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 5 },
+      { op: 'status', status: 'counter', stacks: 4, turns: 1, target: 'ownerChar' },
+    ],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-09', characterId: 'khoi', name: 'Bước Chân Thép',
+    cost: 2, baseCost: 2, types: ['attack', 'defense'], keywords: ['attack', 'defense'],
+    description: 'Gây 5 sát thương, nhận 5 Giáp.',
+    targetType: 'enemy',
+    effects: [{ op: 'damage', value: 5 }, { op: 'block', value: 5 }],
+    aiTags: ['damage', 'defense'], animTags: ['hit', 'shield'],
+  },
+  {
+    id: 'khoi-10', characterId: 'khoi', name: 'Khiêu Khích',
+    cost: 3, baseCost: 3, types: ['defense'], keywords: ['defense', 'weak'],
+    description: 'Nhận 8 Giáp; đối thủ Yếu lượt sau.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 8 },
+      { op: 'status', status: 'weak', turns: 1, target: 'enemyTeam' },
+    ],
+    aiTags: ['defense', 'debuff'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-11', characterId: 'khoi', name: 'Dựng Tường',
+    cost: 3, baseCost: 3, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 12 Giáp; lượt sau rút ít hơn 1.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 12 },
+      { op: 'modifier', target: 'ownTeam', mod: { kind: 'drawDelta', amount: -1, turns: 1 } },
+    ],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-12', characterId: 'khoi', name: 'Húc Vai',
+    cost: 3, baseCost: 3, types: ['attack'], keywords: ['attack', 'expose'],
+    description: 'Gây 9 sát thương; nếu có Giáp, gây Lộ sơ hở trước đòn tiếp theo.',
+    targetType: 'enemy',
+    effects: [
+      { op: 'damage', value: 9 },
+      { op: 'if', cond: { kind: 'selfHasBlock' }, then: [{ op: 'status', status: 'exposeNextHit', target: 'enemyTeam' }] },
+    ],
+    aiTags: ['damage', 'debuff', 'combo'], animTags: ['hit'],
+  },
+  {
+    id: 'khoi-13', characterId: 'khoi', name: 'Pháo Đài',
+    cost: 4, baseCost: 4, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 15 Giáp.',
+    targetType: 'none',
+    effects: [{ op: 'block', value: 15 }],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-14', characterId: 'khoi', name: 'Bảo Vệ Kẻ Yếu',
+    cost: 4, baseCost: 4, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 10 Giáp; nếu HP dưới 50%, thêm 10.',
+    targetType: 'none',
+    effects: [
+      { op: 'if', cond: { kind: 'hpBelowPercent', value: 50 }, then: [{ op: 'block', value: 20 }], else: [{ op: 'block', value: 10 }] },
+    ],
+    aiTags: ['defense', 'emergency'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-15', characterId: 'khoi', name: 'Trừng Phạt Kẻ Phản Bội',
+    cost: 4, baseCost: 4, types: ['attack'], keywords: ['attack'],
+    description: 'Gây 10 sát thương, thêm 2 mỗi điểm Quan hệ âm.',
+    targetType: 'enemy',
+    effects: [{ op: 'damage', value: 10, perNegativeRel: 2 }],
+    aiTags: ['damage', 'burst'], animTags: ['hit'],
+  },
+  {
+    id: 'khoi-16', characterId: 'khoi', name: 'Phản Đòn Sắt',
+    cost: 5, baseCost: 5, types: ['defense'], keywords: ['defense', 'counter'],
+    description: 'Nhận 12 Giáp, Phản đòn 10.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 12 },
+      { op: 'status', status: 'counter', stacks: 10, turns: 1, target: 'ownerChar' },
+    ],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-17', characterId: 'khoi', name: 'Không Được Qua',
+    cost: 5, baseCost: 5, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 18 Giáp; sát thương đầu tiên xuyên Giáp lượt sau thành 0.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 18 },
+      { op: 'modifier', target: 'ownTeam', mod: { kind: 'blockPierceNegate', uses: 1, turns: 2 } },
+    ],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-18', characterId: 'khoi', name: 'Đứng Sau Tôi',
+    cost: 6, baseCost: 6, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 22 Giáp; đầu lượt sau giữ một nửa.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 22 },
+      { op: 'modifier', target: 'ownTeam', mod: { kind: 'keepBlockPercent', amount: 50, turns: 1 } },
+    ],
+    aiTags: ['defense'], animTags: ['shield'],
+  },
+  {
+    id: 'khoi-19', characterId: 'khoi', name: 'Bẻ Gãy Ý Chí',
+    cost: 6, baseCost: 6, types: ['attack'], keywords: ['attack', 'weak'],
+    description: 'Gây 14 sát thương, đối thủ Yếu hai lượt.',
+    targetType: 'enemy',
+    effects: [
+      { op: 'damage', value: 14 },
+      { op: 'status', status: 'weak', turns: 2, target: 'enemyTeam' },
+    ],
+    aiTags: ['damage', 'debuff'], animTags: ['hit'],
+  },
+  {
+    id: 'khoi-20', characterId: 'khoi', name: 'Không Thể Bị Phá Vỡ',
+    cost: 7, baseCost: 7, types: ['defense'], keywords: ['defense'],
+    description: 'Nhận 30 Giáp; lượt sau chỉ có 5 Mana.',
+    targetType: 'none',
+    effects: [
+      { op: 'block', value: 30 },
+      { op: 'modifier', target: 'ownTeam', mod: { kind: 'manaNextTurn', amount: 5 } },
+    ],
+    aiTags: ['defense'], animTags: ['shield', 'glow'],
+  },
+  // CUSTOM khoi-21: gain block = (maxHp - current hp), capped at 20.
+  {
+    id: 'khoi-21', characterId: 'khoi', name: 'Tử Thủ',
+    cost: 7, baseCost: 7, types: ['attack', 'defense'], keywords: ['attack', 'defense', 'exhaust'],
+    description: 'Gây 16 sát thương; nhận Giáp bằng HP đã mất, tối đa 20. Tiêu hao.',
+    targetType: 'enemy', exhaust: true,
+    effects: [{ op: 'damage', value: 16 }, { op: 'custom', id: 'khoi-21' }],
+    aiTags: ['damage', 'defense', 'finisher', 'emergency'], animTags: ['hit', 'shield'],
+  },
+];
